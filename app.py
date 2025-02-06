@@ -51,14 +51,10 @@ def SupplyA(delay, alpha, n, lambd, d, m, sigma):
 
 # StockPriceReview(unit_purchase_price, unit_sale_price, benefit_rate, expences_F, cumulative_supply, cumulative_quantity_ordered,quantity_ordered, dates)
 def StockPriceReview(start_date, u_price, u_sale, benefit_rate, expences_F, C, S,Q, dates):
-    print("==================inside StockPriceReview==================")
   # Convert C and S to NumPy arrays to perform element-wise operations
     C = np.array(C, dtype=float)
     S = np.array(S, dtype=float)
-    print("C: ", C) 
-    print("S: ", S)   
     stock_price = (expences_F * (1 + benefit_rate) - u_sale * S + u_price * C) / (C - S) # Stock Price Dynamics
-    print("stock_price: ", stock_price)
 
     date_zero = np.where(stock_price <= 0)[0] # Find the dates when the stock price is zero
     if len(date_zero) > 0:
@@ -67,7 +63,6 @@ def StockPriceReview(start_date, u_price, u_sale, benefit_rate, expences_F, C, S
         date_zero = None # If there is no date when the stock price is zero, set it to None
         
     stock_price[stock_price <= 0] = 0 # Set the stock price to zero when it is negative
-    print("stock_price after edits: ", stock_price)
 
     # Convert the result into a dictionary for JSON response
     data = {
@@ -77,7 +72,6 @@ def StockPriceReview(start_date, u_price, u_sale, benefit_rate, expences_F, C, S
         "quantity_ordered": Q,
         "cumulative_supply": C.tolist()
     }
-    print("data: ", data)
 
     return data
 
@@ -89,24 +83,15 @@ def StockPrice(expences_F, benefit_rate, u_sale,u_price, S,C ):
     else:
         date_zero = None # If there is no date when the stock price is zero, set it to None
     stock_price[stock_price <= 0] = 0 # Set the stock price to zero when it is negative
-    print("stock_price after edits: ", stock_price)
 
 
 def StockPriceSimulation(u_price, u_sale, benefit_rate, expences_F, delay_supply, stock_rate, order_n, order_f, due_date, order_q, order_fluc):
-    print("==================inside StockPriceSimulation==================")
     supply = SupplyA(delay_supply, stock_rate, order_n, order_f, due_date, order_q, order_fluc)
     C = supply['SC_Quantity'] # Cumulative Supply Quantity
     S = supply['QuantityOC'] # Cumulative Quantity Ordered
     n_D = len(C) # Number of Dates
     Date = supply['Date'][:n_D] # Dates
-
-    print("C: ", C)
-    print("S: ", S)
-
     stock_price = (expences_F * (1 + benefit_rate) - u_sale * S + u_price * C) / (C - S) # Stock Price Dynamics
-    
-    print("stock_price: ", stock_price)
-
     # Stock-flow speed calculation: f(i)t = S(i)t / A(i)t
     stock_flow_speed = S / C
 
@@ -124,16 +109,9 @@ def StockPriceSimulation(u_price, u_sale, benefit_rate, expences_F, delay_supply
         date_zero = date_zero[0] # Get the first date when the stock price is zero
     else:
         date_zero = None # If there is no date when the stock price is zero, set it to None
-        
     stock_price[stock_price <= 0] = 0 # Set the stock price to zero when it is negative
-
-    print("stock_price after edits: ", stock_price)
-    
     # Calculate the Quantity Ordered and Cumulative Supply Quantity for plotting
     Q = np.insert(np.diff(S), 0, S.iloc[0]) 
-
-    print("Q: ", Q)
-
     S_cum = np.insert(np.diff(C), 0, C.iloc[0])
 
     # Convert the result into a dictionary for JSON response
@@ -145,7 +123,6 @@ def StockPriceSimulation(u_price, u_sale, benefit_rate, expences_F, delay_supply
         "stock_flow_speed": stock_flow_speed.tolist(),
         "cost_weight": cost_weight.tolist(),
     }
-    print("data: ", data)    
     return jsonify(data)
 
 # an endpoint to request real old data from an excel file
@@ -180,8 +157,6 @@ def run_simulation():
         return '', 200  # Respond with 200 OK without doing anything else
     # Read parameters from the request JSON
     data = request.get_json()
-    print('Received data:', data)  
-
  # Validate and convert data
     try:
         u_price = float(data.get('u_price'))          # Unitary price of the stock
