@@ -150,7 +150,7 @@ def real_data():
     return StockPriceReview(start_date, unit_purchase_price, unit_sale_price, benefit_rate, expences_F, cumulative_supply, cumulative_quantity_ordered,quantity_ordered, dates)
 
 # an endpoint to get simulation data and return the simulation results
-@app.route('/api/simulation', methods=['POST', 'OPTIONS'])
+@app.route('/api/simulation', methods=['POST', 'OPTIONS', 'HEAD'])
 def run_simulation():
     # Handle CORS preflight request
     if request.method == 'OPTIONS':
