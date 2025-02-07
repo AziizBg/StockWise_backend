@@ -150,7 +150,7 @@ def real_data():
     return StockPriceReview(start_date, unit_purchase_price, unit_sale_price, benefit_rate, expences_F, cumulative_supply, cumulative_quantity_ordered,quantity_ordered, dates)
 
 # an endpoint to get simulation data and return the simulation results
-@app.route('/api/simulation', methods=['POST', 'OPTIONS', 'HEAD'])
+@app.route('/api/simulation', methods=['POST', 'OPTIONS'])
 def run_simulation():
     # Handle CORS preflight request
     if request.method == 'OPTIONS':
@@ -181,6 +181,11 @@ def run_simulation():
         return StockPriceSimulation(u_price, u_sale, benefit_rate, expences_F, delay_supply, stock_rate, order_n, order_f, due_date, order_q, order_fluc)
     except Exception as e:
         return jsonify({"error": str(e)}), 500
+    
+# HEAD request to check the availability of the server
+@app.route('/api', methods=['HEAD'])
+def check_server():
+    return '', 200
     
 
 if __name__ == '__main__':
